@@ -67,7 +67,7 @@ func ParseArgs(args []string, custom map[string]bool) (customFlags FlagValues, p
 			protocFlags = append(protocFlags, arg)
 			nextIsFlag = false
 			if nextIsImportDir {
-				importDirs = append(importDirs, arg)
+				importDirs = append(importDirs, strings.Split(arg, ":")...)
 				nextIsImportDir = false
 			}
 			continue
@@ -115,7 +115,7 @@ func ParseArgs(args []string, custom map[string]bool) (customFlags FlagValues, p
 			continue
 		}
 		if arg[1] == 'I' {
-			importDirs = append(importDirs, arg[2:])
+			importDirs = append(importDirs, strings.Split(arg[2:], ":")...)
 		}
 	}
 	if nextIsFlag || nextIsCustomFlag {

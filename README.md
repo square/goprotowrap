@@ -38,6 +38,12 @@ It parses out the flags it understands, passing the rest through to
 
 ## TODOs
 
+- [ ] Remove square-specific handling of `go_package`. (We have a
+      modified plugin that splits on dots in `package` and
+      `go_package` to set the full output path. I accidentally left
+      this logic in, and can't remove it until we add new-style
+      `go_package` declarations to all our protos.)
+
 - [ ] In the initial call to `protoc` for generating
       FileDescriptorProtos, pass `.proto` files to `protoc` in batches
       instead of all at once.

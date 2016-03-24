@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/square/goprotowrap"
 	"github.com/square/goprotowrap/wrapper"
 )
 
@@ -31,6 +32,7 @@ var customFlags = map[string]bool{
 	"protoc_command":       true,
 	"only_specified_files": false,
 	"square_packages":      false,
+	"version":              false,
 }
 
 func usageAndExit(format string, args ...interface{}) {
@@ -50,6 +52,10 @@ func main() {
 	flags, protocFlags, protos, importDirs, err := wrapper.ParseArgs(os.Args[1:], customFlags)
 	if err != nil {
 		usageAndExit("Error: %v\n", err)
+	}
+	if flags.Has("version") {
+		fmt.Println(goprotowrap.Version)
+		os.Exit(0)
 	}
 	if len(importDirs) == 0 {
 		usageAndExit("Error: at least one import directory (-I) needed\n")
@@ -89,6 +95,6 @@ func main() {
 
 	if err := w.CheckCycles(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v", err)
-		os.Exit(1)
+		os.Exit(2)
 	}
 }

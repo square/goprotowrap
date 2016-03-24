@@ -40,7 +40,7 @@ It parses out the flags it understands, passing the rest through to
 
 ## TODOs
 
-- [x] (Soon) Replace square-specific handling of `go_package` with
+- [x] Replace square-specific handling of `go_package` with
       recently updated upstream logic.
 - [ ] In the initial call to `protoc` for generating
       FileDescriptorProtos, pass `.proto` files to `protoc` in batches

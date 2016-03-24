@@ -31,7 +31,6 @@ var noValueFlags = map[string]bool{
 	"--disallow_services":        true,
 	"--include_imports":          true,
 	"--include_source_info":      true,
-	"--version":                  true,
 	"--decode_raw":               true,
 	"--print_free_field_numbers": true,
 }
@@ -150,6 +149,12 @@ func (fv FlagValues) Bool(name string, defaultValue bool) (bool, error) {
 		return false, nil
 	}
 	return false, fmt.Errorf("flag %q: cannot parse boolean from %q", name, value)
+}
+
+// Has returns true if the given flag was specified at all.
+func (fv FlagValues) Has(name string) bool {
+	_, found := fv[name]
+	return found
 }
 
 // String returns the string version of a flag, if set.

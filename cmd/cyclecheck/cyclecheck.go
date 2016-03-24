@@ -30,6 +30,7 @@ var customFlags = map[string]bool{
 	"print_structure":      false,
 	"protoc_command":       true,
 	"only_specified_files": false,
+	"square_packages":      false,
 }
 
 func usageAndExit(format string, args ...interface{}) {
@@ -62,13 +63,18 @@ func main() {
 	if err != nil {
 		usageAndExit("Error: %v\n", err)
 	}
+	squarePackages, err := flags.Bool("square_packages", false)
+	if err != nil {
+		usageAndExit("Error: %v\n", err)
+	}
 
 	w := &wrapper.Wrapper{
-		ProtocCommand: flags.String("protoc_command", "protoc"),
-		ProtocFlags:   protocFlags,
-		ProtoFiles:    protos,
-		ImportDirs:    importDirs,
-		NoExpand:      noExpand,
+		ProtocCommand:          flags.String("protoc_command", "protoc"),
+		ProtocFlags:            protocFlags,
+		ProtoFiles:             protos,
+		ImportDirs:             importDirs,
+		NoExpand:               noExpand,
+		SquarePackageSemantics: squarePackages,
 	}
 	err = w.Init()
 	if err != nil {

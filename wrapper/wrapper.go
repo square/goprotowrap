@@ -39,6 +39,11 @@ type Wrapper struct {
 	NoExpand      bool     // If true, don't search for other protos in import directories.
 	PrintOnly     bool     // If true, don't generate: just print the protoc commandlines that would be called.
 
+	// If true, use Square package semantics. Note: this is a temporary
+	// hack, and will be removed as soon as Square adds full go_package
+	// declarations to all protos.
+	SquarePackageSemantics bool
+
 	allProtos   []string                // All proto files: those specified, plus those found alongside them.
 	infos       map[string]*FileInfo    // A map of filename to FileInfo struct for all proto files we care about in this run.
 	packages    map[string]*PackageInfo // A list of PackageInfo structs for packages containing files we care about.
@@ -107,7 +112,11 @@ func (w *Wrapper) Init() error {
 	}
 
 	AnnotateFullPaths(w.infos, w.allProtos, w.ImportDirs)
-	ComputeGoLocations(w.infos)
+	if w.SquarePackageSemantics {
+		ComputeSquareGoLocations(w.infos)
+	} else {
+		ComputeGoLocations(w.infos)
+	}
 
 	neededPackages := map[string]struct{}{}
 	for _, proto := range w.ProtoFiles {

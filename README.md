@@ -3,6 +3,8 @@
 A package-at-a-time wrapper for protoc, for generating Go protobuf
 code.
 
+[![Build Status](https://travis-ci.org/square/goprotowrap.svg?branch=master)](https://travis-ci.org/square/goprotowrap)
+
 `protowrap` is a small tool we found helpful when working with
 [protocol buffers](https://developers.google.com/protocol-buffers/) in
 Go at Square. We're publishing it in the hope that others find it

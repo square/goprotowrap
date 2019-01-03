@@ -176,37 +176,6 @@ func GetFileInfos(importPaths []string, protos []string, protocCommand string) (
 	return info, nil
 }
 
-// ComputeSquareGoLocations is the
-// Square-protoc-plugin-fork-compatible version of ComputeGoLocations.
-// It should go away soon, after we add full go_package declarations
-// to all our protos.
-func ComputeSquareGoLocations(infos map[string]*FileInfo) {
-	for _, info := range infos {
-		pkg := info.GoPackage
-		// The presence of a slash implies there's an import path.
-		slash := strings.LastIndex(pkg, "/")
-		if slash > 0 {
-			if strings.Contains(pkg, ";") {
-				info.ComputedPackage = pkg
-				continue
-			}
-			decl := pkg[slash+1:]
-			info.ComputedPackage = pkg + ";" + strings.Map(badToUnderscore, decl)
-			continue
-		}
-		if pkg == "" {
-			pkg = info.Package
-		}
-		if pkg == "" {
-			pkg = baseName(info.Name)
-			fmt.Fprintf(os.Stderr, "Warning: file %q has no go_package and no package.\n", info.Name)
-		}
-		parts := strings.Split(pkg, ".")
-		decl := strings.Map(badToUnderscore, parts[len(parts)-1])
-		info.ComputedPackage = "square/up/protos/" + strings.Join(parts, "/") + ";" + decl
-	}
-}
-
 // ComputeGoLocations uses the package and go_package information to
 // figure out the effective Go location and package.  It sets
 // ComputedPackage to the full form "path;decl" (whether decl is

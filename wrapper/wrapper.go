@@ -229,6 +229,10 @@ OUTER:
 	}
 	close(pkgChan)
 	wg.Wait()
+	select {
+	case err = <-errChan:
+	default:
+	}
 	return err
 }
 

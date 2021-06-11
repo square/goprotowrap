@@ -51,6 +51,9 @@ func usageAndExit(format string, args ...interface{}) {
       if true, print protoc commandlines instead of generating protos
   --version
       print version and exit
+  @file
+      read command line arguments from the named file. Each line of the file
+      will become a single argument at the position where @file is used.
 `)
 	os.Exit(1)
 }

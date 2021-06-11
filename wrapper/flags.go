@@ -18,6 +18,7 @@
 package wrapper
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -49,9 +50,23 @@ type FlagValues map[string]string
 func ParseArgs(args []string, custom map[string]bool) (customFlags FlagValues, protocFlags, protos, importDirs []string, err error) {
 	customFlags = make(FlagValues)
 
+	// Support protoc-style argument files starting with '@'
+	fullArgs := make([]string, 0, len(args))
+	for _, arg := range args {
+		if len(arg) > 0 && arg[0] == '@' {
+			fileArgs, err := expandArgumentFile(arg[1:])
+			if err != nil {
+				return nil, nil, nil, nil, err
+			}
+			fullArgs = append(fullArgs, fileArgs...)
+		} else {
+			fullArgs = append(fullArgs, arg)
+		}
+	}
+
 	var nextIsFlag, nextIsCustomFlag, nextIsImportDir bool
 	var customName string
-	for _, arg := range args {
+	for _, arg := range fullArgs {
 		// Catch empty, "-" and "--" arguments. See
 		// https://github.com/google/protobuf/blob/5e933847/src/google/protobuf/compiler/command_line_interface.cc#L1049
 		if arg == "" || arg == "-" || arg == "--" {
@@ -119,7 +134,7 @@ func ParseArgs(args []string, custom map[string]bool) (customFlags FlagValues, p
 		}
 	}
 	if nextIsFlag || nextIsCustomFlag {
-		return nil, nil, nil, nil, fmt.Errorf("%q flag with no value", args[len(args)-1])
+		return nil, nil, nil, nil, fmt.Errorf("%q flag with no value", fullArgs[len(fullArgs)-1])
 	}
 	return customFlags, protocFlags, protos, importDirs, nil
 }
@@ -165,4 +180,24 @@ func (fv FlagValues) String(name string, defaultValue string) string {
 		return defaultValue
 	}
 	return value
+}
+
+// expandArgumentFile reads additional command line argument from a file.
+func expandArgumentFile(filename string) ([]string, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	var args []string
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		args = append(args, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("%s: %w", filename, err)
+	}
+
+	return args, nil
 }

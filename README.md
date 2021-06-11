@@ -20,8 +20,8 @@ go get -u github.com/square/goprotowrap/cmd/protowrap
 
 Unlike other language plugins, the Go
 [protobuf plugin](https://github.com/golang/protobuf) expects to be
-called separately for each package, and given all files in that
-package.
+called separately for each package, ~and given all files in that
+package~ (fixed).
 
 `protowrap` is called instead of `protoc`, and ensures that `.proto`
 files are processed one Go package at a time.

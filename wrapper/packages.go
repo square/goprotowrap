@@ -139,8 +139,17 @@ func GetFileInfos(importPaths []string, protos []string, protocCommand string) (
 
 	args = append(args, "--include_imports")
 
-	for _, proto := range protos {
-		args = append(args, proto)
+	if len(protos) <= 1000 {
+		// For a small number of protos (arbitrarily picked size), pass files
+		// to protoc in the command argv
+		args = append(args, protos...)
+	} else {
+		// For a large number of protos, use a file containing the arguments
+		argfile := filepath.Join(dir, "protoc-args")
+		if err = ioutil.WriteFile(argfile, []byte(strings.Join(protos, "\n")), 0666); err != nil {
+			return nil, err
+		}
+		args = append(args, "@"+argfile)
 	}
 
 	fmt.Println("Collecting filedescriptors...")

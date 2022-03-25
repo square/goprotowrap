@@ -1,5 +1,7 @@
 # goprotowrap
 
+<mark>The Go plugin for `protoc` got smarter: you should no longer need this</mark>
+
 A package-at-a-time wrapper for protoc, for generating Go protobuf
 code.
 
